@@ -76,6 +76,7 @@ class TeacherController extends BaseController
 
         // Handle image upload
         $image = $this->request->getFile('image');
+        
         // In the controller
         
         //print_r($image); exit;

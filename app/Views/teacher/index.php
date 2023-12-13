@@ -274,7 +274,8 @@
         </div>
     </div>
     
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://kit.fontawesome.com/745a5fedc5.js" crossorigin="anonymous"></script>
@@ -287,7 +288,8 @@
 <script src="https://cdn.datatables.net/datetime/1.4.0/js/dataTables.dateTime.min.js"></script>
     
     <script>
-         function showToast(type, message) {
+
+function showToast(type, message) {
         // Use Toastr library to display a notification
         toastr[type](message);
     }
@@ -305,27 +307,26 @@
 
             // AJAX request
             $.ajax({
-                type: "POST", // Change to "GET" if your server supports GET requests
-                url: "<?php echo base_url('teacher/add') ?>", // Replace with your server endpoint
+                type: "POST",
+                url: "<?php echo base_url('teacher/add') ?>",
                 data: formData,
 
-                processData: false, // Important! Don't process the data
-                contentType: false, // Important! Don't set contentType
+                processData: false, 
+                contentType: false, 
 
                 success: function(response) {
                     var jsonObj = JSON.parse(response);
-                    
 
                     // Handle the success response
                     if (jsonObj.status == 'Success') {
                         //1. hide modal when response == success,
                         //2. reset a form 
+                       
 
-                        //showNotification();
 
                         $('#myModal').modal('hide');
+                        showToast('success', "Data added successfully!"); 
                         $('#teacher_add_form')[0].reset();
-                        
 
                         get_table_data();
                         showToast('success', 'Teacher added successfully');
@@ -341,17 +342,10 @@
                 error: function(error) {
                     // Handle the error response
                     console.log("Error:", error);
-                    //alert(response);
-                    //alert("Error:", error);
                 }
             });
         });
 
-
-
-
-
-        //edit submit
         $("#teacher_edit_form").submit(function(event) {
             // Prevent the default form submission
             event.preventDefault();
@@ -395,101 +389,7 @@
     });
 
 
-
-    function get_table_data() {
-        $('#ttable').DataTable({
-            processing: true,
-            serverSide: true,
-            orderCellsTop: true,
-            ajax: '<?= base_url('teacher') ?>',
-            columnDefs: [{
-                orderable: false,
-                searchable: false,
-                targets: [7,11]
-            }],
-            columns: [{
-                    'data': function(data) {
-                        return data[0]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[1]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[2]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[3]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[4]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[5]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[6]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return `<td><img src="uploads/${data[7]}" alt="${data[7]}" height="50" width="50"></td>`
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[8]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[9]
-                    }
-                },
-                {
-                    'data': function(data) {
-                        return data[10]
-                    }
-                },
-                {
-                    "data": function(data) {
-
-                        return `<td class="text-right py-0 align-middle">
-                        <button type="button" class="btn btn-outline-success"  onclick ="btnEdit(${data[0]})" ><i class="fa-solid fa-pen-to-square fa-beat"></i></button>
-                                <button type="button" class="btn btn-outline-danger"  onclick ="btnDelete(${data[0]})"><i class="fa-solid fa-trash fa-beat" style="color: #f50505;"></i></button>
-                            </td>`
-                    }
-                }
-            ],
-            // initComplete: function(settings, json) {
-            //     this.api().columns([3]).every(function() {
-            //         var column = this;
-            //         var select = $('#selectquiz')
-            //             .on('change', function() {
-            //                 var val = $(this).val();
-            //                 column.search(val).draw();
-            //             });
-
-
-            //     });
-            // }
-        });
-       
-
-    }
-
-    $(document).ready(function() {
+$(document).ready(function() {
         get_table_data();
     });
 
@@ -637,6 +537,207 @@
     
         });
             };
+//Form Validation//
+
+
+    $(document).ready(function () {
+        // Add validation to the form with the specified rules
+        $("#teacher_add_form").validate({
+            errorClass: "text-danger",
+            rules: {
+                name: "required",
+                email: {
+                    required: true,
+                    email: true
+                },
+                address: "required",
+                number: {
+                    required: true,
+                    digits: true
+                },
+                teacher_class: "required",
+                image: "required",
+                student_id: "required",
+                state_id: "required",
+                district_id: "required",
+                cities_id: "required"
+            },
+            messages: {
+                name: "Please enter your name",
+                email: {
+                    required: "Please enter your email address",
+                    email: "Please enter a valid email address"
+                },
+                address: "Please enter your address",
+                number: {
+                    required: "Please enter your phone number",
+                    digits: "Please enter only digits"
+                },
+                teacher_class: "Please select a teacher class",
+                image: "Please select a teacher image",
+                student_id: "Please select a student",
+                state_id: "Please select a state",
+                district_id: "Please select a district",
+                cities_id: "Please select a city"
+            },
+           // submitHandler: function (form) {
+                
+               // form.submit();
+            
+        });
+    });
+
+
+    // Edit Form Validation//
+    $(document).ready(function () {
+        // Add validation to the form with the specified rules
+        $("#teacher_edit_form").validate({
+            errorClass: "text-danger", // Set the error message color to red
+            rules: {
+                name_edit: "required",
+                email_edit: {
+                    required: true,
+                    email: true
+                },
+                address_edit: "required",
+                number_edit: {
+                    required: true,
+                    digits: true
+                },
+                teacher_class_edit: "required",
+                image_edit: {
+                    required: true,
+                    extension: "jpg|jpeg|png|gif"
+                },
+                student_edit_id: "required",
+                state_edit_id: "required",
+                district_edit_id: "required",
+                cities_edit_id: "required"
+            },
+            messages: {
+                name_edit: "Please enter the name",
+                email_edit: {
+                    required: "Please enter the email address",
+                    email: "Please enter a valid email address"
+                },
+                address_edit: "Please enter the address",
+                number_edit: {
+                    required: "Please enter the phone number",
+                    digits: "Please enter only digits"
+                },
+                teacher_class_edit: "Please select a teacher class",
+                image_edit: {
+                    required: "Please select a teacher image",
+                    extension: "Please upload a valid image file (jpg, jpeg, png, gif)"
+                },
+                student_edit_id: "Please select a student",
+                state_edit_id: "Please select a state",
+                district_edit_id: "Please select a district",
+                cities_edit_id: "Please select a city"
+            },
+            //submitHandler: function (form) {
+                // Form is valid, you can submit it
+               // form.submit();
+            
+        });
+    });
+
+    function get_table_data() {
+        $('#ttable').DataTable({
+            processing: true,
+            serverSide: true,
+            "bDestroy": true,
+            orderCellsTop: true,
+            ajax: '<?= base_url('teacher') ?>',
+            columnDefs: [{
+                orderable: false,
+                searchable: false,
+                targets: [7,11]
+            }],
+            columns: [{
+                    'data': function(data) {
+                        return data[0]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[1]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[2]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[3]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[4]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[5]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[6]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return `<td><img src="uploads/${data[7]}" alt="${data[7]}" height="50" width="50"></td>`
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[8]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[9]
+                    }
+                },
+                {
+                    'data': function(data) {
+                        return data[10]
+                    }
+                },
+                {
+                    "data": function(data) {
+
+                        return `<td class="text-right py-0 align-middle">
+                        <button type="button" class="btn btn-outline-success"  onclick ="btnEdit(${data[0]})" ><i class="fa-solid fa-pen-to-square fa-beat"></i></button>
+                                <button type="button" class="btn btn-outline-danger"  onclick ="btnDelete(${data[0]})"><i class="fa-solid fa-trash fa-beat" style="color: #f50505;"></i></button>
+                            </td>`
+                    }
+                }
+            ],
+            // initComplete: function(settings, json) {
+            //     this.api().columns([3]).every(function() {
+            //         var column = this;
+            //         var select = $('#selectquiz')
+            //             .on('change', function() {
+            //                 var val = $(this).val();
+            //                 column.search(val).draw();
+            //             });
+
+
+            //     });
+            // }
+        });
+       
+
+    }
+
+
+
 
         
   

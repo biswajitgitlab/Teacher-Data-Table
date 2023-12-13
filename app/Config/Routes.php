@@ -65,6 +65,20 @@ $routes->post('teacher/delete', 'TeacherController::delete');
 $routes->post('state', 'TeacherController::state');
 $routes->post('city', 'TeacherController::city');
 
+$routes->get('exam', 'LmsController::index');
+$routes->post('add', 'LmsController::create');
+$routes->post('read', 'LmsController::read');
+$routes->post('lms/edit', 'LmsController::edit');
+$routes->post('lms/update', 'LmsController::update');
+
+
+$routes->get('practise', 'PractiseController::index');
+$routes->post('add/add', 'PractiseController::create');
+$routes->post('read', 'PractiseController::read');
+$routes->post('delete', 'PractiseController::delete');
+$routes->post('edit/edit', 'PractiseController::edit');
+$routes->post('update/update', 'PractiseController::update');
+
 ?>
 
 
